@@ -863,7 +863,7 @@ endif(HAVE_SIGNAL_FUNC AND HAVE_SIGNAL_MACRO)
 check_symbol_exists(uname          "${CURL_INCLUDES}" HAVE_UNAME)
 check_symbol_exists(strtoll        "${CURL_INCLUDES}" HAVE_STRTOLL)
 check_symbol_exists(_strtoi64      "${CURL_INCLUDES}" HAVE__STRTOI64)
-#check_symbol_exists(strerror_r     "${CURL_INCLUDES}" HAVE_STRERROR_R)
+check_symbol_exists(strerror_r     "${CURL_INCLUDES}" HAVE_STRERROR_R)
 check_symbol_exists(siginterrupt   "${CURL_INCLUDES}" HAVE_SIGINTERRUPT)
 check_symbol_exists(perror         "${CURL_INCLUDES}" HAVE_PERROR)
 check_symbol_exists(fork           "${CURL_INCLUDES}" HAVE_FORK)
@@ -973,12 +973,16 @@ set(CMAKE_EXTRA_INCLUDE_FILES "")
 
 set(CMAKE_REQUIRED_FLAGS)
 
-#foreach(CURL_TEST
-#    HAVE_GLIBC_STRERROR_R
-#    HAVE_POSIX_STRERROR_R
-#    )
-#  curl_internal_test_run(${CURL_TEST})
-#endforeach(CURL_TEST)
+if (APPLE)
+  foreach(CURL_TEST
+    HAVE_GLIBC_STRERROR_R
+    HAVE_POSIX_STRERROR_R
+    )
+  curl_internal_test_run(${CURL_TEST})
+  endforeach(CURL_TEST)
+else()
+  set(HAVE_POSIX_STRERROR_R YES)
+endif()
 
 # Check for reentrant
 foreach(CURL_TEST
