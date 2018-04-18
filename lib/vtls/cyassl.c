@@ -76,9 +76,7 @@ and that's a problem since options.h hasn't been included yet. */
 #endif
 #endif
 
-#ifdef HAVE_LIMITS_H
 #include <limits.h>
-#endif
 
 #include "urldata.h"
 #include "sendf.h"
@@ -201,8 +199,14 @@ cyassl_connect_step1(struct connectdata *conn,
     use_sni(TRUE);
     break;
   case CURL_SSLVERSION_TLSv1_3:
+#ifdef WOLFSSL_TLS13
+    req_method = wolfTLSv1_3_client_method();
+    use_sni(TRUE);
+    break;
+#else
     failf(data, "CyaSSL: TLS 1.3 is not yet supported");
     return CURLE_SSL_CONNECT_ERROR;
+#endif
   case CURL_SSLVERSION_SSLv3:
 #ifdef WOLFSSL_ALLOW_SSLV3
     req_method = SSLv3_client_method();
@@ -247,7 +251,11 @@ cyassl_connect_step1(struct connectdata *conn,
     */
     if((wolfSSL_CTX_SetMinVersion(BACKEND->ctx, WOLFSSL_TLSV1) != 1) &&
        (wolfSSL_CTX_SetMinVersion(BACKEND->ctx, WOLFSSL_TLSV1_1) != 1) &&
-       (wolfSSL_CTX_SetMinVersion(BACKEND->ctx, WOLFSSL_TLSV1_2) != 1)) {
+       (wolfSSL_CTX_SetMinVersion(BACKEND->ctx, WOLFSSL_TLSV1_2) != 1)
+#ifdef WOLFSSL_TLS13
+       && (wolfSSL_CTX_SetMinVersion(BACKEND->ctx, WOLFSSL_TLSV1_3) != 1)
+#endif
+      ) {
       failf(data, "SSL: couldn't set the minimum protocol version");
       return CURLE_SSL_CONNECT_ERROR;
     }
@@ -958,7 +966,7 @@ static CURLcode Curl_cyassl_random(struct Curl_easy *data,
   return CURLE_OK;
 }
 
-static void Curl_cyassl_sha256sum(const unsigned char *tmp, /* input */
+static CURLcode Curl_cyassl_sha256sum(const unsigned char *tmp, /* input */
                                   size_t tmplen,
                                   unsigned char *sha256sum /* output */,
                                   size_t unused)
@@ -968,6 +976,7 @@ static void Curl_cyassl_sha256sum(const unsigned char *tmp, /* input */
   InitSha256(&SHA256pw);
   Sha256Update(&SHA256pw, tmp, (word32)tmplen);
   Sha256Final(&SHA256pw, sha256sum);
+  return CURLE_OK;
 }
 
 static void *Curl_cyassl_get_internals(struct ssl_connect_data *connssl,
@@ -1003,7 +1012,7 @@ const struct Curl_ssl Curl_ssl_cyassl = {
   Curl_cyassl_connect,             /* connect */
   Curl_cyassl_connect_nonblocking, /* connect_nonblocking */
   Curl_cyassl_get_internals,       /* get_internals */
-  Curl_cyassl_close,               /* close */
+  Curl_cyassl_close,               /* close_one */
   Curl_none_close_all,             /* close_all */
   Curl_cyassl_session_free,        /* session_free */
   Curl_none_set_engine,            /* set_engine */

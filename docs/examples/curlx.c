@@ -183,7 +183,7 @@ static unsigned char *my_get_ext(X509 *cert, const int type,
 
 /* This is an application verification call back, it does not
    perform any addition verification but tries to find a URL
-   in the presented certificat. If found, this will become
+   in the presented certificate. If found, this will become
    the URL to be used in the POST.
 */
 
@@ -537,7 +537,7 @@ int main(int argc, char **argv)
              res = curl_easy_perform(p.curl));
   {
     int result = curl_easy_getinfo(p.curl, CURLINFO_CONTENT_TYPE, &response);
-    if(mimetypeaccept && p.verbose)
+    if(mimetypeaccept && p.verbose) {
       if(!strcmp(mimetypeaccept, response))
         BIO_printf(p.errorbio, "the response has a correct mimetype : %s\n",
                    response);
@@ -545,6 +545,7 @@ int main(int argc, char **argv)
         BIO_printf(p.errorbio, "the response doesn\'t have an acceptable "
                    "mime type, it is %s instead of %s\n",
                    response, mimetypeaccept);
+    }
   }
 
   /*** code d'erreur si accept mime ***, egalement code return HTTP != 200 ***/
