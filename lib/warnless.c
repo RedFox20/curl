@@ -102,7 +102,13 @@
 #endif
 
 #ifndef SIZEOF_SIZE_T
-#  define SIZEOF_SIZE_T sizeof(size_t)
+#  if sizeof(size_t) == 8
+#    define SIZEOF_SIZE_T 8
+#  elif sizeof(size_t) == 4
+#    define SIZEOF_SIZE_T 4
+#  else
+#    error "sizeof(size_t) was not 8 or 4!"
+#  endif
 #endif
 
 #if (SIZEOF_SIZE_T == SIZEOF_SHORT)
