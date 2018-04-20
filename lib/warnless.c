@@ -101,6 +101,10 @@
 #  error "SIZEOF_CURL_OFF_T not defined"
 #endif
 
+#ifndef SIZEOF_SIZE_T
+#  define SIZEOF_SIZE_T sizeof(size_t)
+#endif
+
 #if (SIZEOF_SIZE_T == SIZEOF_SHORT)
 #  define CURL_MASK_SSIZE_T  CURL_MASK_SSHORT
 #  define CURL_MASK_USIZE_T  CURL_MASK_USHORT
