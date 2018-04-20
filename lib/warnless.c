@@ -101,16 +101,6 @@
 #  error "SIZEOF_CURL_OFF_T not defined"
 #endif
 
-#ifndef SIZEOF_SIZE_T
-#  if sizeof(size_t) == 8
-#    define SIZEOF_SIZE_T 8
-#  elif sizeof(size_t) == 4
-#    define SIZEOF_SIZE_T 4
-#  else
-#    error "sizeof(size_t) was not 8 or 4!"
-#  endif
-#endif
-
 #if (SIZEOF_SIZE_T == SIZEOF_SHORT)
 #  define CURL_MASK_SSIZE_T  CURL_MASK_SSHORT
 #  define CURL_MASK_USIZE_T  CURL_MASK_USHORT
@@ -124,7 +114,8 @@
 #  define CURL_MASK_SSIZE_T  CURL_MASK_SCOFFT
 #  define CURL_MASK_USIZE_T  CURL_MASK_UCOFFT
 #else
-#  error "SIZEOF_SIZE_T not defined"
+#  define CURL_MASK_SSIZE_T  CURL_MASK_SCOFFT
+#  define CURL_MASK_USIZE_T  CURL_MASK_UCOFFT
 #endif
 
 /*
