@@ -982,15 +982,16 @@ set(CMAKE_EXTRA_INCLUDE_FILES "")
 
 set(CMAKE_REQUIRED_FLAGS)
 
-if (NOT APPLE)
+if (ANDROID OR APPLE)
+  set(HAVE_POSIX_STRERROR_R YES)
+else()
   foreach(CURL_TEST
     HAVE_GLIBC_STRERROR_R
     HAVE_POSIX_STRERROR_R
     )
   curl_internal_test_run(${CURL_TEST})
   endforeach(CURL_TEST)
-else()
-  set(HAVE_POSIX_STRERROR_R YES)
+
 endif()
 
 # Check for reentrant
