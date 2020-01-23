@@ -65,3 +65,4 @@ windows/
 cmake-build-debug/
 
 linux/
+mama.cmake
