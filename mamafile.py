@@ -6,7 +6,8 @@ class curl(mama.BuildTarget):
     def configure(self):
         self.add_cmake_options('BUILD_CURL_EXE=OFF', 'BUILD_TESTING=OFF',
                                'CURL_STATICLIB=ON', 'CURL_STATIC_CRT=ON',
-                               'CURL_DISABLE_LDAP=ON', 'CURL_DISABLE_LDAPS=ON')
+                               'CURL_DISABLE_LDAP=ON', 'CURL_DISABLE_LDAPS=ON',
+                               'CMAKE_USE_OPENSSL=OFF')
 
     def package(self):
         self.copy_built_file('lib/curl_config.h', 'include/curl')
