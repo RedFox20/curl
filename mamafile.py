@@ -16,3 +16,5 @@ class curl(mama.BuildTarget):
         self.export_libs('lib', ['libcurl.lib', '.a'])
         if self.windows:
             self.export_syslib('Ws2_32.lib')
+        if self.linux:
+            self.export_syslib('z')
